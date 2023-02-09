@@ -86,3 +86,16 @@ get_all_posts_doc = {
                                                                POSTS_PREVIEW_RESPONSE]})
     }
 }
+
+get_post_doc = {
+    'responses': {
+        '200': openapi.Response('ok',
+                                examples={'application/json': {'pk': 1,
+                                                               'name': 'post',
+                                                               'description': 'description',
+                                                               'image': 'image',
+                                                               'rating': 5,
+                                                               'markdown': 'hello'}}),
+        '404': openapi.Response('not found')
+    }
+}

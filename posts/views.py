@@ -1,10 +1,13 @@
-from .serializers import PostCreateSerializer, CategorySerializer, PostPreviewSerializer
+from .serializers import PostCreateSerializer,\
+                         CategorySerializer,\
+                         PostPreviewSerializer,\
+                         FullPostViewSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework import permissions
 from rest_framework.decorators import api_view
-from .logics.posts import get_posts_with_category, get_all_posts
+from .logics.posts import get_posts_with_category, get_all_posts, get_post_with_pk
 from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from .doc import *
@@ -48,3 +51,13 @@ class AllPostsAPIView(APIView):
     def get(self, request):
         serializer = PostPreviewSerializer(get_all_posts(), many=True)
         return Response(status=200, data=serializer.data)
+
+
+@swagger_auto_schema(methods=['get'], **get_post_doc)
+@api_view()
+def post_view(request, pk):
+    post = get_post_with_pk(pk)
+    if post is not None:
+        return Response(status=200,
+                        data=FullPostViewSerializer(post).data)
+    return Response(status=404)
