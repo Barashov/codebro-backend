@@ -7,4 +7,6 @@ urlpatterns = [
     path('category/<pk>/', views.PostCategoriesAPIView.as_view()),
     path('posts/', views.AllPostsAPIView.as_view()),
     path('post/<pk>/', views.post_view),
+    path('following-posts/', views.FollowingPostsAPIView.as_view()),
+    path('follow-post/<post_pk>/', views.FollowPost.as_view()),
 ]

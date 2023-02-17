@@ -7,7 +7,11 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework import permissions
 from rest_framework.decorators import api_view
-from .logics.posts import get_posts_with_category, get_all_posts, get_post_with_pk
+from .logics.posts import get_posts_with_category,\
+                          get_all_posts,\
+                          get_post_with_pk,\
+                          get_following_posts,\
+                          follow_post
 from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from .doc import *
@@ -61,3 +65,34 @@ def post_view(request, pk):
         return Response(status=200,
                         data=FullPostViewSerializer(post).data)
     return Response(status=404)
+
+
+class FollowingPostsAPIView(APIView):
+    """
+    просмотр всех избранных постов
+    - headers: Authorization Token dlfasldflasdfjlsadfa
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request):
+        data = get_following_posts(request.user)
+        if data is not None and len(data) != 0:
+            return Response(status=200,
+                            data=PostPreviewSerializer(instance=data,
+                                                       many=True).data)
+        return Response(status=400)
+
+
+class FollowPost(APIView):
+    """
+    добавить пост в избранное
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, post_pk):
+        post = get_post_with_pk(post_pk)
+        if post is not None:
+            follow_post(post, request.user)
+            return Response(status=200)
+        return Response(status=400)
+
